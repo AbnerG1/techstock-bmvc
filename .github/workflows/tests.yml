@@ -1,0 +1,60 @@
+name: Testes do TechStock
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Baixar o projeto
+        uses: actions/checkout@v7
+
+      - name: Preparar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar testes
+        run: python -m unittest discover -s tests -v
+
+      - name: Testar execução real com cURL
+        run: |
+          set -euo pipefail
+          python route.py > server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true' EXIT
+
+          servidor_pronto=0
+          for tentativa in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/portal > /dev/null; then
+              servidor_pronto=1
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$servidor_pronto" -ne 1 ]; then
+            cat server.log
+            exit 1
+          fi
+
+          bash curl_exemplos.sh

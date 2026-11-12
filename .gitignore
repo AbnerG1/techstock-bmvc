@@ -1,0 +1,8 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+cookies.txt
+app/controllers/db/*.json
+!app/controllers/db/.gitkeep
+.DS_Store
