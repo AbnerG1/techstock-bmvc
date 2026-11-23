@@ -120,3 +120,40 @@ tbody tr:hover { background: #f8faff; }
     .search-input { max-width: none; }
     .page-heading { align-items: flex-start; }
 }
+
+
+/* Formulários de gerenciamento do catálogo */
+.demo-access { margin-top: 14px; padding: 10px 12px; border-radius: 8px; color: #536581; background: #f2f6ff; font-size: .82rem; }
+.demo-access strong { color: var(--ink); }
+.flash-message { margin: 0 0 18px; padding: 13px 16px; border-radius: 10px; font-size: .9rem; }
+.flash-success { color: #176b4d; background: #e8f7ef; border: 1px solid #c7ead7; }
+.flash-error { color: #9e3030; background: #fff0f0; border: 1px solid #f2d0d0; }
+.form-card { margin-bottom: 19px; }
+.section-heading { margin-bottom: 18px; }
+.section-heading h2 { margin: 6px 0; }
+.section-heading p { margin-bottom: 0; }
+.component-form { display: grid; grid-template-columns: 1.3fr 1fr .55fr 1.5fr; gap: 13px; align-items: end; }
+.form-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.form-field label, .edit-form label { margin-top: 0; }
+.form-field input, .edit-form input { padding: 10px 11px; font-size: .88rem; }
+.form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+.form-actions .primary-button { margin-top: 2px; }
+.actions-cell { min-width: 170px; white-space: nowrap; }
+.small-button { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; padding: 7px 10px; border: 1px solid transparent; border-radius: 7px; font: inherit; font-size: .76rem; font-weight: 700; text-decoration: none; cursor: pointer; }
+.edit-button { color: #244bd0; background: #edf2ff; border-color: #dbe4ff; list-style: none; }
+.edit-button::-webkit-details-marker { display: none; }
+.save-button { color: #fff; background: var(--blue); width: 100%; margin-top: 5px; }
+.delete-button { color: #a83232; background: #fff0f0; border-color: #f3d6d6; }
+.edit-details { display: inline-block; position: relative; vertical-align: middle; }
+.edit-form { position: absolute; z-index: 5; top: 38px; right: 0; display: flex; flex-direction: column; gap: 8px; width: min(320px, 80vw); padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 15px 40px rgba(20, 35, 60, .16); white-space: normal; }
+.edit-form strong { margin-bottom: 4px; }
+.delete-form { display: inline-block; margin-left: 5px; vertical-align: middle; }
+@media (max-width: 850px) {
+    .component-form { grid-template-columns: 1fr 1fr; }
+    .form-actions { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+    .component-form { grid-template-columns: 1fr; }
+    .form-actions { grid-column: auto; }
+    .form-actions .primary-button { width: 100%; }
+}
