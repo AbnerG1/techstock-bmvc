@@ -1,4 +1,8 @@
 from pathlib import Path
+from threading import Timer
+from urllib.parse import urlencode
+import os
+import webbrowser
 
 from bottle import Bottle, redirect, request, response, run, static_file
 
@@ -22,6 +26,11 @@ def require_api_login():
         response.status = 401
         return {"erro": "Acesso não autorizado. Faça login primeiro e envie cookies.txt."}
     return None
+
+
+def voltar_ao_banco(mensagem, tipo="sucesso"):
+    query = urlencode({"mensagem": mensagem, "tipo": tipo})
+    redirect(f"/banco?{query}")
 
 
 @app.route("/")
@@ -74,7 +83,60 @@ def banco():
     username = current_user()
     if not username:
         return redirect("/portal")
-    return application.render_banco(username)
+    tipo = request.query.getunicode("tipo") or "sucesso"
+    if tipo not in ("sucesso", "erro"):
+        tipo = "sucesso"
+    return application.render_banco(
+        username,
+        mensagem=request.query.getunicode("mensagem"),
+        tipo_mensagem=tipo,
+    )
+
+
+# Formulários da página Banco. A API JSON continua disponível para testes e integração.
+@app.post("/banco/componentes")
+def criar_componente_pela_pagina():
+    if not current_user():
+        return redirect("/portal")
+    try:
+        application.componentes.criar(
+            nome=request.forms.getunicode("nome"),
+            categoria=request.forms.getunicode("categoria"),
+            quantidade=request.forms.getunicode("quantidade"),
+            descricao=request.forms.getunicode("descricao") or "",
+        )
+    except ValueError as exc:
+        voltar_ao_banco(str(exc), "erro")
+    voltar_ao_banco("Componente cadastrado com sucesso.")
+
+
+@app.post("/banco/componentes/<componente_id:int>/atualizar")
+def atualizar_componente_pela_pagina(componente_id):
+    if not current_user():
+        return redirect("/portal")
+    try:
+        componente = application.componentes.atualizar(
+            componente_id,
+            nome=request.forms.getunicode("nome"),
+            categoria=request.forms.getunicode("categoria"),
+            quantidade=request.forms.getunicode("quantidade"),
+            descricao=request.forms.getunicode("descricao"),
+        )
+    except ValueError as exc:
+        voltar_ao_banco(str(exc), "erro")
+    if componente is None:
+        voltar_ao_banco(f"Componente #{componente_id} não encontrado.", "erro")
+    voltar_ao_banco(f"Componente #{componente_id} atualizado com sucesso.")
+
+
+@app.post("/banco/componentes/<componente_id:int>/excluir")
+def remover_componente_pela_pagina(componente_id):
+    if not current_user():
+        return redirect("/portal")
+    componente = application.componentes.remover(componente_id)
+    if componente is None:
+        voltar_ao_banco(f"Componente #{componente_id} não encontrado.", "erro")
+    voltar_ao_banco(f"Componente #{componente_id} excluído com sucesso.")
 
 
 @app.get("/componentes")
@@ -161,4 +223,6 @@ def remover_componente(componente_id):
 
 
 if __name__ == "__main__":
+    if os.getenv("TECHSTOCK_ABRIR_NAVEGADOR", "1") == "1" and not os.getenv("CI"):
+        Timer(1.2, lambda: webbrowser.open_new_tab("http://127.0.0.1:8080/portal")).start()
     run(app, host="127.0.0.1", port=8080, debug=False, reloader=False)
