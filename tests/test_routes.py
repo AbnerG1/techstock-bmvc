@@ -66,7 +66,7 @@ class TestRotas(unittest.TestCase):
         status, headers, _ = self.requisicao(
             "POST",
             "/portal",
-            {"username": "admin", "password": "techstock123"},
+            {"username": "admin", "password": "1234"},
         )
         self.assertIn(status, (302, 303, 307))
         cookie = SimpleCookie()
@@ -117,6 +117,64 @@ class TestRotas(unittest.TestCase):
         )
         self.assertEqual(status, 400)
         self.assertIn("não pode ser negativa", json.loads(conteudo)["erro"])
+
+    def test_crud_pela_pagina_banco(self):
+        cookie = self.fazer_login()
+        status, _, conteudo = self.requisicao("GET", "/banco", cookie=cookie)
+        self.assertEqual(status, 200)
+        self.assertIn("Adicionar componente", conteudo)
+        self.assertIn("Editar", conteudo)
+        self.assertIn("Excluir", conteudo)
+
+        status, headers, _ = self.requisicao(
+            "POST",
+            "/banco/componentes",
+            {
+                "nome": "Sensor HC-SR04",
+                "categoria": "Sensor",
+                "quantidade": "10",
+                "descricao": "Sensor para teste de interface.",
+            },
+            cookie,
+        )
+        self.assertIn(status, (302, 303, 307))
+        self.assertIn("Componente+cadastrado", headers.get("Location", ""))
+        componente_id = self.route.application.componentes.listar()[-1].id
+
+        status, _, conteudo = self.requisicao("GET", "/banco", cookie=cookie)
+        self.assertEqual(status, 200)
+        self.assertIn("Sensor HC-SR04", conteudo)
+
+        status, _, _ = self.requisicao(
+            "POST",
+            f"/banco/componentes/{componente_id}/atualizar",
+            {
+                "nome": "Sensor HC-SR04",
+                "categoria": "Sensor",
+                "quantidade": "15",
+                "descricao": "Quantidade atualizada.",
+            },
+            cookie,
+        )
+        self.assertIn(status, (302, 303, 307))
+        self.assertEqual(self.route.application.componentes.buscar(componente_id).quantidade, 15)
+
+        status, _, _ = self.requisicao(
+            "POST",
+            f"/banco/componentes/{componente_id}/excluir",
+            cookie=cookie,
+        )
+        self.assertIn(status, (302, 303, 307))
+        self.assertIsNone(self.route.application.componentes.buscar(componente_id))
+
+    def test_formulario_nao_permite_acesso_sem_login(self):
+        status, headers, _ = self.requisicao(
+            "POST",
+            "/banco/componentes",
+            {"nome": "Teste", "categoria": "Teste", "quantidade": "1"},
+        )
+        self.assertIn(status, (302, 303, 307))
+        self.assertEqual(headers.get("Location"), "/portal")
 
     def test_crud_e_consulta_na_pagina_banco(self):
         cookie = self.fazer_login()
