@@ -1,12 +1,12 @@
-# TechStock — Catálogo de componentes eletrônicos
+# Versão Final do Projeto BLUE PRINT — TechStock
 
-O TechStock é uma aplicação web simples para consultar e manter um catálogo de componentes eletrônicos. O usuário entra pelo Portal e, na página Banco, pode cadastrar, pesquisar, editar e excluir componentes.
+O **TechStock** é a versão final do projeto BLUE PRINT: uma aplicação web para consultar e manter um catálogo de componentes eletrônicos. Pelo Portal, o usuário acessa a página Banco, onde pode cadastrar, pesquisar, editar e excluir componentes.
 
 O projeto usa Python e Bottle e mantém a organização em Models, Views e Controllers. Os dados ficam em arquivos JSON dentro de `app/controllers/db/`.
 
 **Aluno:** Abner da Silva Gomes
 
-## Como usar no Windows
+## Como executar no Windows
 
 1. Baixe o projeto pelo botão **Code → Download ZIP** do GitHub e extraia a pasta, ou clone o repositório.
 2. Abra a pasta `techstock-bmvc` no VS Code.
@@ -37,7 +37,7 @@ A senha é armazenada como hash PBKDF2-HMAC-SHA256 com salt individual, não em 
 
 > A senha curta é destinada à demonstração local da atividade. Não use essa configuração em um servidor público.
 
-## Usando a página Banco
+## Funcionalidades do sistema
 
 Depois do login, a página `/banco` mostra os componentes cadastrados e os indicadores de tipos e unidades em estoque.
 
@@ -48,7 +48,7 @@ Depois do login, a página `/banco` mostra os componentes cadastrados e os indic
 
 As alterações são salvas nos arquivos JSON e a página retorna à lista atualizada. Os campos são validados: nome e categoria são obrigatórios, quantidade deve ser um inteiro igual ou maior que zero e a descrição pode ter até 300 caracteres.
 
-## API
+## API e operações CRUD
 
 As operações também continuam disponíveis pela API, protegidas pela sessão de login:
 
@@ -61,7 +61,7 @@ As operações também continuam disponíveis pela API, protegidas pela sessão 
 
 A página usa rotas de formulário (`POST /banco/componentes...`) para que o CRUD possa ser feito diretamente pelo navegador. As rotas JSON anteriores foram mantidas para testes e integração.
 
-## Organização do código
+## Arquitetura e organização
 
 ```text
 techstock-bmvc/
@@ -111,6 +111,6 @@ Os testes verificam os modelos, a persistência JSON, o login, o bloqueio de sol
 
 O workflow do GitHub Actions também executa a suíte de testes em Python 3.10, 3.11, 3.12 e 3.13.
 
-## Encerrar
+## Encerrar o sistema
 
 Na janela do inicializador, pressione `Ctrl + C` para parar o servidor. Os registros dos componentes e usuários permanecem salvos em `app/controllers/db/`.
