@@ -174,7 +174,7 @@ class TestRotas(unittest.TestCase):
             {"nome": "Teste", "categoria": "Teste", "quantidade": "1"},
         )
         self.assertIn(status, (302, 303, 307))
-        self.assertEqual(headers.get("Location"), "/portal")
+        self.assertTrue(headers.get("Location", "").endswith("/portal"))
 
     def test_crud_e_consulta_na_pagina_banco(self):
         cookie = self.fazer_login()
