@@ -9,6 +9,7 @@
         <div class="card-icon">⌁</div>
         <h2>Acessar o TechStock</h2>
         <p class="muted">Informe seu usuário e sua senha.</p>
+        <div class="demo-access">Acesso para demonstração: <strong>admin</strong> / <strong>1234</strong></div>
         % if erro:
         <div class="alert" role="alert">{{erro}}</div>
         % end
