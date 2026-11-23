@@ -3,7 +3,7 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://127.0.0.1:8080}"
 USUARIO="${TECHSTOCK_ADMIN_USER:-admin}"
-SENHA="${TECHSTOCK_ADMIN_PASSWORD:-techstock123}"
+SENHA="${TECHSTOCK_ADMIN_PASSWORD:-1234}"
 COOKIE_FILE="$(mktemp)"
 trap 'rm -f "$COOKIE_FILE"' EXIT
 
