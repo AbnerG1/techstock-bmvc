@@ -33,7 +33,7 @@ class Application:
     def render_portal(self, erro=None):
         return template("portal", erro=erro)
 
-    def render_banco(self, username):
+    def render_banco(self, username, mensagem=None, tipo_mensagem="sucesso"):
         componentes = self.componentes.listar()
         quantidade_total = sum(item.quantidade for item in componentes)
         return template(
@@ -41,4 +41,6 @@ class Application:
             username=username,
             componentes=componentes,
             quantidade_total=quantidade_total,
+            mensagem=mensagem,
+            tipo_mensagem=tipo_mensagem,
         )
