@@ -60,9 +60,17 @@ class UserRecord(DataRecord):
         super().__init__("user_accounts.json")
         if not self.path.exists():
             username = os.getenv("TECHSTOCK_ADMIN_USER", "admin")
-            password = os.getenv("TECHSTOCK_ADMIN_PASSWORD", "techstock123")
+            password = os.getenv("TECHSTOCK_ADMIN_PASSWORD", "1234")
             self.models = [User_account.criar(username, password)]
             self.save()
+        else:
+            # Migra somente a senha antiga de demonstração.
+            # Senhas personalizadas pelo usuário são preservadas.
+            admin = self.buscar("admin")
+            if admin and admin.confere_senha("techstock123"):
+                indice = self.models.index(admin)
+                self.models[indice] = User_account.criar("admin", "1234")
+                self.save()
 
     def converter(self, data):
         return User_account.from_dict(data)
